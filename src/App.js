@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import styled from "@emotion/styled";
 
 import "./App.css";
+import { TextField } from "@mui/material";
 
 const PokemonRow = ({ poke, onSelect }) => {
 	return (
@@ -92,11 +93,17 @@ function App() {
 	return (
 		<Container>
 			<Title>Pokemon Search</Title>
-			<Input
-				type="text"
+
+			<TextField
+				fullWidth
 				value={filter}
 				onChange={(e) => setFilter(e.target.value)}
 			/>
+			{/* <Input
+				type="text"
+				value={filter}
+				onChange={(e) => setFilter(e.target.value)}
+			/> */}
 			<TwoColumnLayout>
 				<div className="">
 					<table width="100%">
