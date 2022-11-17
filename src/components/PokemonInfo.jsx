@@ -1,7 +1,11 @@
+import { useContext } from "react";
+import PokemonContext from "../PokemonContext";
 import PokemonType from "../PokemonType";
 
-const PokemonInfo = ({ name, base, type }) => {
-	return (
+const PokemonInfo = () => {
+	const { selectedItem } = useContext(PokemonContext);
+	const { name, base } = selectedItem;
+	return selectedItem ? (
 		<div className="">
 			<h1>{name.english}</h1>
 			<table>
@@ -15,7 +19,7 @@ const PokemonInfo = ({ name, base, type }) => {
 				</tbody>
 			</table>
 		</div>
-	);
+	) : null;
 };
 
 PokemonInfo.propTypes = PokemonType;
