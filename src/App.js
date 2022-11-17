@@ -1,69 +1,89 @@
-import { useState, useEffect } from "react";
+import React from "react";
 import styled from "@emotion/styled";
+import { CssBaseline } from "@mui/material";
 
-import "./App.css";
 import PokemonInfo from "./components/PokemonInfo";
+import PokemonContext from "./PokemonContext";
 import PokemonFilter from "./components/PokemonFilter";
 import PokemonTable from "./components/PokemonTable";
-import PokemonContext from "./PokemonContext";
+
+import "./App.css";
 
 const Title = styled.h1`
 	text-align: center;
 `;
-const TwoColumnLayout = styled.div`
-	display: grid;
-	grid-template-columns: 70% 30%;
-	grid-column-gap: "1rem";
-`;
-const Container = styled.div`
+const PageContainer = styled.div`
 	margin: auto;
 	width: 800px;
-	padding-top: 1rem;
+	padding-top: 1em;
 `;
-// const Input = styled.input`
-// 	width: 100%;
-// 	font-size: x-large;
-// 	padding: 0.2rem;
-// `;
+const TwoColumnLayout = styled.div`
+	display: grid;
+	grid-template-columns: 80% 20%;
+	grid-column-gap: 1rem;
+`;
+
+const stateReducer = (state, { type, payload }) => {
+	switch (type) {
+		case "SET_FILTER":
+			return {
+				...state,
+				filter: payload,
+			};
+		case "SET_POKEMON":
+			return {
+				...state,
+				pokemon: payload,
+			};
+		case "SET_SELECTED_POKEMON":
+			return {
+				...state,
+				selectedPokemon: payload,
+			};
+		default:
+			throw new Error();
+	}
+};
 
 function App() {
-	const [filter, setFilter] = useState("");
-	const [selectedItem, setSelectedItem] = useState(null);
-	const [pokemon, setPokemon] = useState([]);
+	const [state, dispatch] = React.useReducer(stateReducer, {
+		filter: "",
+		pokemon: [],
+		selectedPokemon: null,
+	});
 
-	useEffect(() => {
-		fetch("http://localhost:3000/starting-react/pokemon.json")
+	React.useEffect(() => {
+		fetch("/starting-react/pokemon.json")
 			.then((resp) => resp.json())
-			.then((data) => {
-				console.log("fetched pokemons");
-				setPokemon(data);
-			});
+			.then((payload) =>
+				dispatch({
+					type: "SET_POKEMON",
+					payload,
+				})
+			);
 	}, []);
+
+	if (!state.pokemon) {
+		return <div>Loading data</div>;
+	}
 
 	return (
 		<PokemonContext.Provider
 			value={{
-				filter,
-				setFilter,
-				selectedItem,
-				setSelectedItem,
-				pokemon,
+				state,
+				dispatch,
 			}}>
-			<Container>
+			<PageContainer>
+				<CssBaseline />
 				<Title>Pokemon Search</Title>
-
-				<PokemonFilter />
 				<TwoColumnLayout>
-					<div className="">
+					<div>
+						<PokemonFilter />
 						<PokemonTable />
 					</div>
-					{selectedItem && (
-						<div className="">
-							<PokemonInfo />
-						</div>
-					)}
+					<PokemonInfo />
 				</TwoColumnLayout>
-			</Container>
+			</PageContainer>
 		</PokemonContext.Provider>
 	);
 }

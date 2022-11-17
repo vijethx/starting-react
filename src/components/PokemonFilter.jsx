@@ -1,14 +1,27 @@
-import { TextField } from "@mui/material";
-import { useContext } from "react";
+import React, { useContext } from "react";
+import styled from "@emotion/styled";
+
 import PokemonContext from "../PokemonContext";
 
+const Input = styled.input`
+	width: 100%;
+	padding: 0.2rem;
+	font-size: large;
+`;
+
 const PokemonFilter = () => {
-	const { filter, setFilter } = useContext(PokemonContext);
+	const { state, dispatch } = useContext(PokemonContext);
+
 	return (
-		<TextField
-			fullWidth
-			value={filter}
-			onChange={(e) => setFilter(e.target.value)}
+		<Input
+			type="text"
+			value={state.filter}
+			onChange={(evt) =>
+				dispatch({
+					type: "SET_FILTER",
+					payload: evt.target.value,
+				})
+			}
 		/>
 	);
 };
